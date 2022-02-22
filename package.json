@@ -1,0 +1,28 @@
+{
+  "name": "parser",
+  "version": "1.0.0",
+  "description": "custom ast parser",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -w ",
+    "build": "tsc -p ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elPoeta/parser.git"
+  },
+  "keywords": [
+    "ast",
+    "parser"
+  ],
+  "author": "Leonardo Tosetto (leonardo.a.tosetto@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elPoeta/parser/issues"
+  },
+  "homepage": "https://github.com/elPoeta/parser#readme",
+  "dependencies": {
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
+  }
+}
