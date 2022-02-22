@@ -17,6 +17,10 @@ export class Tokenizer {
     return this.cursor < this.expression.length;
   }
 
+  isEOF(): boolean {
+    return this.cursor === this.expression.length;
+  }
+
   getNextToken(): TokenI | null {
     if (!this.hasMoreTokens()) {
       return null;
@@ -24,15 +28,26 @@ export class Tokenizer {
 
     const expr = this.expression.slice(this.cursor);
 
-    if (!Number.isNaN(expr[0])) {
+    if (!Number.isNaN(Number(expr[0]))) {
       let num = '';
       while (!Number.isNaN(Number(expr[this.cursor]))) {
-        num += expr[this.cursor];
-        this.cursor++;
+        num += expr[this.cursor++];
       }
       return {
         type: 'NUMBER',
-        value: Number(num)
+        value: num
+      }
+    }
+
+    if (expr[0] === '"') {
+      let str = '';
+      do {
+        str += expr[this.cursor++];
+      } while (expr[this.cursor] !== '"' && !this.isEOF());
+      str += this.cursor++;
+      return {
+        type: 'STRING',
+        value: str
       }
     }
     return null;

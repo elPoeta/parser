@@ -16,20 +16,41 @@ export class Parser {
     this.expression = expression;
     this.tokenizer.init(expression);
     this.currentToken = this.tokenizer.getNextToken();
+    console.log("CURRENT ", this.currentToken)
     return this;
   }
 
   Program() {
     return {
       type: 'Program',
-      body: this.NumericLiteral()
+      body: this.Literal()
     }
   }
+
+  Literal() {
+    switch (this.currentToken?.type) {
+      case 'NUMBER':
+        return this.NumericLiteral();
+      case 'STRING':
+        return this.StringLiteral();
+      default:
+        throw new SyntaxError(`Literal: unespected literal, ${this.currentToken?.type} `);
+    }
+  }
+
   NumericLiteral(): NumericLiteralI {
-    const token = this.getToken("NUMBER")
+    const token = this.getToken("NUMBER");
     return {
       type: "NumericLiteral",
       value: Number(token.value)
+    }
+  }
+
+  StringLiteral() {
+    const token = this.getToken("STRING")
+    return {
+      type: "StringLiteral",
+      value: (token.value as string).slice(1, -1)
     }
   }
 
