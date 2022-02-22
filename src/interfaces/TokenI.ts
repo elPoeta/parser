@@ -1,4 +1,4 @@
 export interface TokenI {
   type: string;
-  value: number;
+  value: number | string;
 }
