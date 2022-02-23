@@ -1,6 +1,6 @@
 import { TokenI } from '../interfaces/TokenI';
 
-type SpecType = [RegExp, string][];
+type SpecType = [RegExp, string | null][];
 export class Tokenizer {
   private expression: string;
   private cursor: number;
@@ -10,9 +10,13 @@ export class Tokenizer {
     this.expression = '';
     this.cursor = 0;
     this.Spec = [
-      [/^\d+/, 'NUMBER'],
-      [/^"[^"]*"/, 'STRING'],
-      [/^'[^']*'/, 'STRING'],
+      [/^\s+/, null], //Whitespace
+      [/^\/\/.*/, null], // skip single line comment
+      [/^\/\*[\s\S]*?\*\\/, null], // skip Multiline comments 
+      [/^;/, ';'], // comma delimiter
+      [/^\d+/, 'NUMBER'], //Number
+      [/^"[^"]*"/, 'STRING'], // String double quotes 
+      [/^'[^']*'/, 'STRING'], // String single quotes
     ]
   }
 
@@ -39,6 +43,7 @@ export class Tokenizer {
     for (const [regExp, tokenType] of this.Spec) {
       const tokenValue = this.match(regExp, expr);
       if (!tokenValue) continue;
+      if (!tokenType) return this.getNextToken();
       return {
         type: tokenType,
         value: tokenValue

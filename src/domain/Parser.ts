@@ -2,29 +2,54 @@ import { Tokenizer } from "./Tokenizer";
 import { NumericLiteralI } from "../interfaces/NumericLiteralI";
 import { TokenI } from "../interfaces/TokenI";
 export class Parser {
-  private expression: string;
+  private stringExpression: string;
   private tokenizer: Tokenizer;
   private currentToken: TokenI | null;
 
   constructor() {
-    this.expression = '';
+    this.stringExpression = '';
     this.tokenizer = new Tokenizer();
     this.currentToken = null;
   }
 
-  parse(expression: string) {
-    this.expression = expression;
-    this.tokenizer.init(expression);
+  parse(stringExpression: string) {
+    this.stringExpression = stringExpression;
+    this.tokenizer.init(stringExpression);
     this.currentToken = this.tokenizer.getNextToken();
-    console.log("CURRENT ", this.currentToken)
     return this;
   }
 
   Program() {
     return {
       type: 'Program',
-      body: this.Literal()
+      body: this.StatementList()
     }
+  }
+
+  StatementList() {
+    const statementList = [this.Statement()];
+    while (this.currentToken !== null) {
+      statementList.push(this.Statement());
+    }
+
+    return statementList;
+  }
+
+  Statement() {
+    return this.ExpressionStatement();
+  }
+
+  ExpressionStatement() {
+    const expression = this.Expression();
+    this.getToken(';');
+    return {
+      type: 'ExpressionStatement',
+      expression
+    }
+  }
+
+  Expression() {
+    return this.Literal();
   }
 
   Literal() {
