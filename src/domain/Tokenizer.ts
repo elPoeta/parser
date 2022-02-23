@@ -14,8 +14,12 @@ export class Tokenizer {
       [/^\/\/.*/, null], // skip single line comment
       [/^\/\*[\s\S]*?\*\\/, null], // skip Multiline comments 
       [/^;/, ';'], // comma delimiter
-      [/^{/, '{'], //  open curly delimiter
-      [/^}/, '}'], // close curly delimiter
+      [/^\{/, '{'], //  open curly delimiter
+      [/^\}/, '}'], // close curly delimiter
+      [/^\(/, '('], //  open parenthesis delimiter
+      [/^\)/, ')'], // close parenthesis delimiter
+      [/^[+\-]/, 'ADD_SUB_OPERATOR'],  //Math operators + -
+      [/^[*\/]/, 'MULTI_DIV_OPERATOR'], // Math operators * /
       [/^\d+/, 'NUMBER'], //Number
       [/^"[^"]*"/, 'STRING'], // String double quotes 
       [/^'[^']*'/, 'STRING'], // String single quotes
