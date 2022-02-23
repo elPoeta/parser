@@ -14,6 +14,8 @@ export class Tokenizer {
       [/^\/\/.*/, null], // skip single line comment
       [/^\/\*[\s\S]*?\*\\/, null], // skip Multiline comments 
       [/^;/, ';'], // comma delimiter
+      [/^{/, '{'], //  open curly delimiter
+      [/^}/, '}'], // close curly delimiter
       [/^\d+/, 'NUMBER'], //Number
       [/^"[^"]*"/, 'STRING'], // String double quotes 
       [/^'[^']*'/, 'STRING'], // String single quotes
