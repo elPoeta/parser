@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc -w ",
     "build": "tsc -p .",
-    "test": "ts-node tests/run.ts"
+    "tests": "ts-node tests/run.ts"
   },
   "repository": {
     "type": "git",
