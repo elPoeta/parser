@@ -26,9 +26,9 @@ export class Parser {
     }
   }
 
-  StatementList() {
+  StatementList(stopCurrent: string | null = null) {
     const statementList = [this.Statement()];
-    while (this.currentToken !== null) {
+    while (this.currentToken !== null && this.currentToken.type !== stopCurrent) {
       statementList.push(this.Statement());
     }
 
@@ -36,7 +36,24 @@ export class Parser {
   }
 
   Statement() {
-    return this.ExpressionStatement();
+    switch (this.currentToken?.type) {
+      case ';':
+        return this.EmptyStatement();
+      case "{":
+        return this.BlockStatement();
+      default:
+        return this.ExpressionStatement();
+    }
+  }
+
+  BlockStatement(): unknown {
+    this.getToken('{');
+    const body: unknown[] | null = this.currentToken?.type !== '}' ? this.StatementList('}') : [];
+    this.getToken('}');
+    return {
+      type: 'BlockStatement',
+      body
+    }
   }
 
   ExpressionStatement() {
@@ -50,6 +67,13 @@ export class Parser {
 
   Expression() {
     return this.Literal();
+  }
+
+  EmptyStatement() {
+    this.getToken(';');
+    return {
+      type: 'EmptyStatement'
+    }
   }
 
   Literal() {
