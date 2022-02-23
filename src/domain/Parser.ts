@@ -66,7 +66,53 @@ export class Parser {
   }
 
   Expression() {
-    return this.Literal();
+    return this.AddSubExpression();
+  }
+
+  AddSubExpression() {
+    let left: any = this.MultiDivExpression();
+    while (this.currentToken?.type === 'ADD_SUB_OPERATOR') {
+      const operator = this.getToken('ADD_SUB_OPERATOR').value;
+      const right = this.MultiDivExpression();
+      left = {
+        type: 'BinaryExpression',
+        operator,
+        left,
+        right
+      }
+    }
+    return left;
+  }
+
+  MultiDivExpression() {
+    let left: any = this.PrimaryExpression();
+    while (this.currentToken?.type === 'MULTI_DIV_OPERATOR') {
+      const operator = this.getToken('MULTI_DIV_OPERATOR').value;
+      const right = this.PrimaryExpression();
+      left = {
+        type: 'BinaryExpression',
+        operator,
+        left,
+        right
+      }
+    }
+    return left;
+  }
+
+  PrimaryExpression() {
+    switch (this.currentToken?.type) {
+      case '(':
+        return this.ParenthesizedExpression();
+      default:
+        return this.Literal()
+    }
+  }
+
+  ParenthesizedExpression() {
+    this.getToken('(');
+    const expression = this.Expression();
+    this.getToken(')');
+    return expression;
   }
 
   EmptyStatement() {
@@ -87,7 +133,7 @@ export class Parser {
     }
   }
 
-  NumericLiteral(): NumericLiteralI {
+  NumericLiteral() {
     const token = this.getToken("NUMBER");
     return {
       type: "NumericLiteral",

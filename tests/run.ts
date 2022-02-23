@@ -4,13 +4,15 @@ import { literaltest } from './literalTests';
 import { statementListTest } from './statementListTest';
 import { blockTests } from './blockTests';
 import { emptyStatementTest } from './emptyStatementTest';
+import { binaryStatementTests } from './binaryStatementTests';
+
 
 type ProgramType = {
   type: string,
   body: any[]
 }
 
-const tests = [literaltest, statementListTest, blockTests, emptyStatementTest];
+const tests = [literaltest, statementListTest, blockTests, emptyStatementTest, binaryStatementTests];
 
 export type TestType = (program: string, expected: ProgramType) => void
 
