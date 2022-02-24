@@ -41,9 +41,47 @@ export class Parser {
         return this.EmptyStatement();
       case "{":
         return this.BlockStatement();
+      case 'let':
+      case 'const':
+      case 'var':
+        return this.VariableStatement(this.currentToken?.type);
       default:
         return this.ExpressionStatement();
     }
+  }
+
+  VariableStatement(tokenType: string) {
+    this.getToken(tokenType);
+    const declarations = this.VariableDeclarationList();
+    this.getToken(';');
+    return {
+      type: 'VariableStatement',
+      declarations
+    }
+  }
+
+  VariableDeclarationList() {
+    const declarations = [];
+    do {
+      declarations.push(this.VariableDeclaration());
+    } while (this.currentToken!.type === ',' && this.getToken(','));
+    return declarations;
+  }
+
+  VariableDeclaration() {
+    const id = this.Identifier();
+    const init = this.currentToken!.type !== ';' && this.currentToken!.type !== ','
+      ? this.VariableInitializer() : null;
+    return {
+      type: 'VariableDeclaration',
+      id,
+      init
+    }
+  }
+
+  VariableInitializer() {
+    this.getToken('SIMPLE_ASSIGN');
+    return this.AssignmentExpression();
   }
 
   BlockStatement(): unknown {

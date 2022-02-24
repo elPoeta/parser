@@ -18,6 +18,10 @@ export class Tokenizer {
       [/^\}/, '}'], // close curly delimiter
       [/^\(/, '('], //  open parenthesis delimiter
       [/^\)/, ')'], // close parenthesis delimiter
+      [/^\,/, ','], // comma delimiter
+      [/^\blet\b/, 'let'], // keywords
+      [/^\bconst\b/, 'const'], // keywords
+      [/^\bvar\b/, 'var'], // keywords
       [/^\d+/, 'NUMBER'], //Number
       [/^\w+/, 'IDENTIFIER'], // identifier
       [/^=/, 'SIMPLE_ASSIGN'],  // Simple assign
