@@ -39,6 +39,8 @@ export class Parser {
     switch (this.currentToken?.type) {
       case ';':
         return this.EmptyStatement();
+      case 'if':
+        return this.IfStatement();
       case "{":
         return this.BlockStatement();
       case 'let':
@@ -48,6 +50,24 @@ export class Parser {
       default:
         return this.ExpressionStatement();
     }
+  }
+
+  IfStatement() {
+    this.getToken('if');
+    this.getToken('(');
+    const test = this.Expression();
+    this.getToken(')');
+    const consequent: any = this.Statement();
+    const alternate: any = this.currentToken !== null && this.currentToken!.type === 'else'
+      ? this.getToken('else') && this.Statement() : null;
+
+    return {
+      type: 'IfStatement',
+      test,
+      consequent,
+      alternate
+    }
+
   }
 
   VariableStatement(tokenType: string) {
@@ -108,7 +128,7 @@ export class Parser {
   }
 
   AssignmentExpression(): any {
-    const left = this.AddSubExpression();
+    const left = this.RelationalExpression();
     if (!this.isAssignmentOperator(this.currentToken!.type)) {
       return left;
     }
@@ -118,6 +138,10 @@ export class Parser {
       left: this.checkValidAssignmentTarget(left),
       rigth: this.AssignmentExpression()
     }
+  }
+
+  RelationalExpression() {
+    return this.BinaryExpression('AddSubExpression', 'RELATIONAL_OPERATOR');
   }
 
   isAssignmentOperator(tokenType: string | null) {
@@ -156,10 +180,10 @@ export class Parser {
   }
 
   BinaryExpression(builderName: string, operatorName: string) {
-    let left: any = builderName === 'MultiDivExpression' ? this.MultiDivExpression() : this.PrimaryExpression();
+    let left: any = this.getBinaryExecutor(builderName);
     while (this.currentToken?.type === operatorName) {
       const operator = this.getToken(operatorName).value;
-      const right: any = builderName === 'MultiDivExpression' ? this.MultiDivExpression() : this.PrimaryExpression();
+      const right: any = this.getBinaryExecutor(builderName);
       left = {
         type: 'BinaryExpression',
         operator,
@@ -168,6 +192,17 @@ export class Parser {
       }
     }
     return left;
+  }
+
+  getBinaryExecutor(builderName: string) {
+    switch (builderName) {
+      case 'MultiDivExpression':
+        return this.MultiDivExpression();
+      case 'PrimaryExpression':
+        return this.PrimaryExpression();
+      case 'AddSubExpression':
+        return this.AddSubExpression();
+    }
   }
 
   PrimaryExpression() {

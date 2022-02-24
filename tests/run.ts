@@ -7,6 +7,7 @@ import { emptyStatementTest } from './emptyStatementTest';
 import { binaryStatementTests } from './binaryStatementTests';
 import { assignmentTests } from './assigmentTests';
 import { variableDeclarationTests } from './variableDeclarationTests';
+import { ifTests } from './ifTests';
 
 
 type ProgramType = {
@@ -26,6 +27,11 @@ const exec = () => {
   const x = 42;
   let x,y;
   var x = y = 56;
+  if (x > 5) {
+    x = 1;
+  } else {
+    x = 2;
+  }
   `;
   const ast = parser.parse(program).Program();
 
