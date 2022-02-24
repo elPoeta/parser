@@ -5,6 +5,7 @@ import { statementListTest } from './statementListTest';
 import { blockTests } from './blockTests';
 import { emptyStatementTest } from './emptyStatementTest';
 import { binaryStatementTests } from './binaryStatementTests';
+import { assignmentTests } from './assigmentTests';
 
 
 type ProgramType = {
@@ -20,12 +21,9 @@ export type TestType = (program: string, expected: ProgramType) => void
 const parser: Parser = new Parser();
 const exec = () => {
   const program: string = `
-  {
-    "hello"; 
-    
-     68;
-  }
-  
+   
+  x = y = 34;
+  x *= 3;
   `;
   const ast = parser.parse(program).Program();
 
