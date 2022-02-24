@@ -6,6 +6,7 @@ import { blockTests } from './blockTests';
 import { emptyStatementTest } from './emptyStatementTest';
 import { binaryStatementTests } from './binaryStatementTests';
 import { assignmentTests } from './assigmentTests';
+import { variableDeclarationTests } from './variableDeclarationTests';
 
 
 type ProgramType = {
@@ -13,7 +14,7 @@ type ProgramType = {
   body: any[]
 }
 
-const tests = [literaltest, statementListTest, blockTests, emptyStatementTest, binaryStatementTests];
+const tests = [literaltest, statementListTest, blockTests, emptyStatementTest, binaryStatementTests, variableDeclarationTests];
 
 export type TestType = (program: string, expected: ProgramType) => void
 
@@ -21,9 +22,10 @@ export type TestType = (program: string, expected: ProgramType) => void
 const parser: Parser = new Parser();
 const exec = () => {
   const program: string = `
-   
-  x = y = 34;
-  x *= 3;
+  let x; 
+  const x = 42;
+  let x,y;
+  var x = y = 56;
   `;
   const ast = parser.parse(program).Program();
 
