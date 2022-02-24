@@ -18,9 +18,12 @@ export class Tokenizer {
       [/^\}/, '}'], // close curly delimiter
       [/^\(/, '('], //  open parenthesis delimiter
       [/^\)/, ')'], // close parenthesis delimiter
+      [/^\d+/, 'NUMBER'], //Number
+      [/^\w+/, 'IDENTIFIER'], // identifier
+      [/^=/, 'SIMPLE_ASSIGN'],  // Simple assign
+      [/^[\*\/\+\-]=/, 'COMPLEX_ASSIGN'],  // Complex assign
       [/^[+\-]/, 'ADD_SUB_OPERATOR'],  //Math operators + -
       [/^[*\/]/, 'MULTI_DIV_OPERATOR'], // Math operators * /
-      [/^\d+/, 'NUMBER'], //Number
       [/^"[^"]*"/, 'STRING'], // String double quotes 
       [/^'[^']*'/, 'STRING'], // String single quotes
     ]

@@ -66,29 +66,62 @@ export class Parser {
   }
 
   Expression() {
-    return this.AddSubExpression();
+    return this.AssignmentExpression();
+  }
+
+  AssignmentExpression(): any {
+    const left = this.AddSubExpression();
+    if (!this.isAssignmentOperator(this.currentToken!.type)) {
+      return left;
+    }
+    return {
+      type: 'AssignmentExpression',
+      operator: this.AssignmentOperator().value,
+      left: this.checkValidAssignmentTarget(left),
+      rigth: this.AssignmentExpression()
+    }
+  }
+
+  isAssignmentOperator(tokenType: string | null) {
+    return tokenType === 'SIMPLE_ASSIGN' || tokenType === 'COMPLEX_ASSIGN';
+  }
+
+  LeftHandSideExpression() {
+    return this.Identifier();
+  }
+
+  Identifier() {
+    const name = this.getToken('IDENTIFIER').value;
+    return {
+      type: 'Identifier',
+      name,
+
+    }
+  }
+
+  checkValidAssignmentTarget(node: any) {
+    if (node.type === 'Identifier') return node;
+    new SyntaxError(`Invalid left-hand side in assignment expression`);
+  }
+
+  AssignmentOperator() {
+    if (this.currentToken!.type === 'SIMPLE_ASSIGN') return this.getToken('SIMPLE_ASSIGN');
+    return this.getToken('COMPLEX_ASSIGN');
   }
 
   AddSubExpression() {
-    let left: any = this.MultiDivExpression();
-    while (this.currentToken?.type === 'ADD_SUB_OPERATOR') {
-      const operator = this.getToken('ADD_SUB_OPERATOR').value;
-      const right = this.MultiDivExpression();
-      left = {
-        type: 'BinaryExpression',
-        operator,
-        left,
-        right
-      }
-    }
-    return left;
+    return this.BinaryExpression('MultiDivExpression', 'ADD_SUB_OPERATOR');
   }
 
   MultiDivExpression() {
-    let left: any = this.PrimaryExpression();
-    while (this.currentToken?.type === 'MULTI_DIV_OPERATOR') {
-      const operator = this.getToken('MULTI_DIV_OPERATOR').value;
-      const right = this.PrimaryExpression();
+    return this.BinaryExpression('PrimaryExpression', 'MULTI_DIV_OPERATOR');
+  }
+
+  BinaryExpression(builderName: string, operatorName: string) {
+    let left: any = builderName === 'MultiDivExpression' ? this.MultiDivExpression() : this.PrimaryExpression();
+    while (this.currentToken?.type === operatorName) {
+      const operator = this.getToken(operatorName).value;
+      const right: any = builderName === 'MultiDivExpression' ? this.MultiDivExpression() : this.PrimaryExpression();
       left = {
         type: 'BinaryExpression',
         operator,
@@ -100,12 +133,17 @@ export class Parser {
   }
 
   PrimaryExpression() {
+    if (this.isLiteralExpression(this.currentToken!.type)) return this.Literal();
     switch (this.currentToken?.type) {
       case '(':
         return this.ParenthesizedExpression();
       default:
-        return this.Literal()
+        return this.LeftHandSideExpression();
     }
+  }
+
+  isLiteralExpression(tokenType: string | null) {
+    return tokenType === 'NUMBER' || tokenType === 'STRING';
   }
 
   ParenthesizedExpression() {
