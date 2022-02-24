@@ -11,23 +11,33 @@ export class Tokenizer {
     this.cursor = 0;
     this.Spec = [
       [/^\s+/, null], //Whitespace
+
       [/^\/\/.*/, null], // skip single line comment
       [/^\/\*[\s\S]*?\*\\/, null], // skip Multiline comments 
+
       [/^;/, ';'], // comma delimiter
       [/^\{/, '{'], //  open curly delimiter
       [/^\}/, '}'], // close curly delimiter
       [/^\(/, '('], //  open parenthesis delimiter
       [/^\)/, ')'], // close parenthesis delimiter
       [/^\,/, ','], // comma delimiter
-      [/^\blet\b/, 'let'], // keywords
-      [/^\bconst\b/, 'const'], // keywords
-      [/^\bvar\b/, 'var'], // keywords
+
+      [/^\blet\b/, 'let'], // keywords variable
+      [/^\bconst\b/, 'const'], // keywords variable
+      [/^\bvar\b/, 'var'], // keywords variable
+      [/^\bif\b/, 'if'],  // keywords statement
+      [/^\belse\b/, 'else'],   // keywords statement
+
       [/^\d+/, 'NUMBER'], //Number
+
       [/^\w+/, 'IDENTIFIER'], // identifier
       [/^=/, 'SIMPLE_ASSIGN'],  // Simple assign
       [/^[\*\/\+\-]=/, 'COMPLEX_ASSIGN'],  // Complex assign
+
       [/^[+\-]/, 'ADD_SUB_OPERATOR'],  //Math operators + -
       [/^[*\/]/, 'MULTI_DIV_OPERATOR'], // Math operators * /
+      [/^[><]=?/, 'RELATIONAL_OPERATOR'], // relational operator
+
       [/^"[^"]*"/, 'STRING'], // String double quotes 
       [/^'[^']*'/, 'STRING'], // String single quotes
     ]
