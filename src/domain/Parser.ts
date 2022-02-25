@@ -81,7 +81,17 @@ export class Parser {
   }
 
   DoWhileStatement() {
-
+    this.getToken('do');
+    const body: any = this.Statement();
+    this.getToken('while');
+    this.getToken('(');
+    const test = this.Expression();
+    this.getToken(')');
+    return {
+      type: 'DoWhileStatement',
+      test,
+      body
+    }
   }
 
   ForStatement() {
