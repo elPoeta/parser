@@ -43,6 +43,7 @@ export class Tokenizer {
       [/^[><]=?/, 'RELATIONAL_OPERATOR'], // relational operator
       [/^&&/, 'LOGICAL_AND'], // relational operator logical &&
       [/^\|\|/, 'LOGICAL_OR'], // relational operator logical ||
+      [/^!/, 'LOGICAL_NOT'], // relational operator logical !
 
 
       [/^"[^"]*"/, 'STRING'], // String double quotes 
