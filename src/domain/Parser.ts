@@ -128,7 +128,7 @@ export class Parser {
   }
 
   AssignmentExpression(): any {
-    const left = this.RelationalExpression();
+    const left = this.LogicalORExpression();
     if (!this.isAssignmentOperator(this.currentToken!.type)) {
       return left;
     }
@@ -171,12 +171,39 @@ export class Parser {
     return this.getToken('COMPLEX_ASSIGN');
   }
 
+  LogicalANDExpression() {
+    return this.LogicalExpression('EqualityExpression', 'LOGICAL_AND');
+  }
+
+  LogicalORExpression() {
+    return this.LogicalExpression('LogicalANDExpression', 'LOGICAL_OR');
+  }
+
+  EqualityExpression() {
+    return this.BinaryExpression('RelationalExpression', 'EQUALITY_OPERATOR')
+  }
+
   AddSubExpression() {
     return this.BinaryExpression('MultiDivExpression', 'ADD_SUB_OPERATOR');
   }
 
   MultiDivExpression() {
     return this.BinaryExpression('PrimaryExpression', 'MULTI_DIV_OPERATOR');
+  }
+
+  LogicalExpression(builderName: string, operatorName: string) {
+    let left: any = this.getBinaryExecutor(builderName);
+    while (this.currentToken?.type === operatorName) {
+      const operator = this.getToken(operatorName).value;
+      const right: any = this.getBinaryExecutor(builderName);
+      left = {
+        type: 'LogicalExpression',
+        operator,
+        left,
+        right
+      }
+    }
+    return left;
   }
 
   BinaryExpression(builderName: string, operatorName: string) {
@@ -202,6 +229,12 @@ export class Parser {
         return this.PrimaryExpression();
       case 'AddSubExpression':
         return this.AddSubExpression();
+      case 'RelationalExpression':
+        return this.RelationalExpression();
+      case 'EqualityExpression':
+        return this.EqualityExpression();
+      case 'LogicalANDExpression':
+        return this.LogicalANDExpression();
     }
   }
 
@@ -216,7 +249,11 @@ export class Parser {
   }
 
   isLiteralExpression(tokenType: string | null) {
-    return tokenType === 'NUMBER' || tokenType === 'STRING';
+    return tokenType === 'NUMBER' ||
+      tokenType === 'STRING' ||
+      tokenType === 'true' ||
+      tokenType === 'false' ||
+      tokenType === 'null';
   }
 
   ParenthesizedExpression() {
@@ -239,6 +276,12 @@ export class Parser {
         return this.NumericLiteral();
       case 'STRING':
         return this.StringLiteral();
+      case 'true':
+        return this.BooleanLiteral(true);
+      case 'false':
+        return this.BooleanLiteral(false);
+      case 'null':
+        return this.NullLiteral();
       default:
         throw new SyntaxError(`Literal: unespected literal, ${this.currentToken?.type} `);
     }
@@ -257,6 +300,22 @@ export class Parser {
     return {
       type: "StringLiteral",
       value: (token.value as string).slice(1, -1)
+    }
+  }
+
+  BooleanLiteral(value: boolean) {
+    this.getToken(value ? 'true' : 'false');
+    return {
+      type: "BooleanLiteral",
+      value
+    }
+  }
+
+  NullLiteral() {
+    this.getToken('null');
+    return {
+      type: "NullLiteral",
+      value: null
     }
   }
 

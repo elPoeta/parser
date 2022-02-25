@@ -23,15 +23,20 @@ export type TestType = (program: string, expected: ProgramType) => void
 const parser: Parser = new Parser();
 const exec = () => {
   const program: string = `
-  let x; 
-  const x = 42;
-  let x,y;
-  var x = y = 56;
-  if (x > 5) {
-    x = 1;
+ let x; 
+ const x = 42;
+ let x,y;
+ var x = y = 56;
+ if (x > 5) {
+   x = 1;
   } else {
     x = 2;
-  }
+ }
+
+  x + 5 > 10 == true; 
+  x < 5 && y > 10;
+  x < 5 || y > 10;
+  
   `;
   const ast = parser.parse(program).Program();
 
@@ -45,7 +50,7 @@ const test: TestType = (program: string, expected: ProgramType) => {
   assert.deepEqual(ast, expected);
 }
 
-tests.forEach(testRun => testRun(test));
+//tests.forEach(testRun => testRun(test));
 
 console.log("All ASSERTION PASSED!!")
 
