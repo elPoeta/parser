@@ -148,8 +148,30 @@ export class Parser {
     return tokenType === 'SIMPLE_ASSIGN' || tokenType === 'COMPLEX_ASSIGN';
   }
 
-  LeftHandSideExpression() {
-    return this.Identifier();
+
+  UnaryExpression(): any {
+    let operator = null;
+    switch (this.currentToken!.type) {
+      case 'ADD_SUB_OPERATOR':
+        operator = this.getToken('ADD_SUB_OPERATOR').value;
+        break;
+      case 'LOGICAL_NOT':
+        operator = this.getToken('LOGICAL_NOT').value;
+      default:
+        break;
+    }
+    if (operator) {
+      return {
+        type: 'UnaryExpression',
+        operator,
+        argument: this.UnaryExpression()
+      }
+    }
+    return this.LeftHandSideExpression();
+  }
+
+  LeftHandSideExpression(): any {
+    return this.PrimaryExpression();
   }
 
   Identifier() {
@@ -188,7 +210,7 @@ export class Parser {
   }
 
   MultiDivExpression() {
-    return this.BinaryExpression('PrimaryExpression', 'MULTI_DIV_OPERATOR');
+    return this.BinaryExpression('UnaryExpression', 'MULTI_DIV_OPERATOR');
   }
 
   LogicalExpression(builderName: string, operatorName: string) {
@@ -235,6 +257,8 @@ export class Parser {
         return this.EqualityExpression();
       case 'LogicalANDExpression':
         return this.LogicalANDExpression();
+      case 'UnaryExpression':
+        return this.UnaryExpression();
     }
   }
 
@@ -243,6 +267,8 @@ export class Parser {
     switch (this.currentToken?.type) {
       case '(':
         return this.ParenthesizedExpression();
+      case 'IDENTIFIER':
+        return this.Identifier();
       default:
         return this.LeftHandSideExpression();
     }
