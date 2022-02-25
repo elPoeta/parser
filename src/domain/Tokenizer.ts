@@ -27,9 +27,13 @@ export class Tokenizer {
       [/^\bvar\b/, 'var'], // keywords variable
       [/^\bif\b/, 'if'],  // keywords statement
       [/^\belse\b/, 'else'],   // keywords statement
+      [/^\btrue\b/, 'true'],   // keywords statement
+      [/^\bfalse\b/, 'false'],   // keywords statement
+      [/^\bnull\b/, 'null'],   // keywords statement
 
       [/^\d+/, 'NUMBER'], //Number
 
+      [/^[=!]=/, 'EQUALITY_OPERATOR'],  // Equality operator
       [/^\w+/, 'IDENTIFIER'], // identifier
       [/^=/, 'SIMPLE_ASSIGN'],  // Simple assign
       [/^[\*\/\+\-]=/, 'COMPLEX_ASSIGN'],  // Complex assign
@@ -37,6 +41,9 @@ export class Tokenizer {
       [/^[+\-]/, 'ADD_SUB_OPERATOR'],  //Math operators + -
       [/^[*\/]/, 'MULTI_DIV_OPERATOR'], // Math operators * /
       [/^[><]=?/, 'RELATIONAL_OPERATOR'], // relational operator
+      [/^&&/, 'LOGICAL_AND'], // relational operator logical &&
+      [/^\|\|/, 'LOGICAL_OR'], // relational operator logical ||
+
 
       [/^"[^"]*"/, 'STRING'], // String double quotes 
       [/^'[^']*'/, 'STRING'], // String single quotes
