@@ -47,10 +47,47 @@ export class Parser {
       case 'const':
       case 'var':
         return this.VariableStatement(this.currentToken?.type);
+      case 'while':
+      case 'do':
+      case 'for':
+        return this.IterationStatement();
       default:
         return this.ExpressionStatement();
     }
   }
+
+  IterationStatement() {
+    switch (this.currentToken!.type) {
+      case 'while':
+        return this.WhileStatement();
+      case 'do':
+        return this.DoWhileStatement();
+      case 'for':
+        return this.ForStatement();
+    }
+  }
+
+  WhileStatement() {
+    this.getToken('while');
+    this.getToken('(');
+    const test = this.Expression();
+    this.getToken(')');
+    const body: any = this.Statement();
+    return {
+      type: 'WhileStatement',
+      test,
+      body
+    }
+  }
+
+  DoWhileStatement() {
+
+  }
+
+  ForStatement() {
+
+  }
+
 
   IfStatement() {
     this.getToken('if');

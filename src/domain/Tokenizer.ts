@@ -30,6 +30,9 @@ export class Tokenizer {
       [/^\btrue\b/, 'true'],   // keywords statement
       [/^\bfalse\b/, 'false'],   // keywords statement
       [/^\bnull\b/, 'null'],   // keywords statement
+      [/^\bwhile\b/, 'while'],   // keywords iteration
+      [/^\bdo\b/, 'do'],   // keywords iteration
+      [/^\bfor\b/, 'for'],   // keywords iteration
 
       [/^\d+/, 'NUMBER'], //Number
 
