@@ -46,7 +46,9 @@ const exec = () => {
     x -= 1;
   }
 
-
+  do {
+    x -= 1;
+  } while (x > 10);
   
   `;
   const ast = parser.parse(program).Program();
