@@ -95,9 +95,30 @@ export class Parser {
   }
 
   ForStatement() {
-
+    this.getToken('for');
+    this.getToken('(');
+    const init = this.currentToken!.type !== ';' ? this.ForStatementInit() : null;
+    this.getToken(';');
+    const test = this.currentToken!.type !== ';' ? this.Expression() : null;
+    this.getToken(';');
+    const update = this.currentToken!.type !== ')' ? this.Expression() : null;
+    this.getToken(')');
+    const body: any = this.Statement();
+    return {
+      type: 'ForStatement',
+      init,
+      test,
+      update,
+      body
+    }
   }
 
+  ForStatementInit() {
+    if (this.currentToken!.type === 'let') {
+      return this.VariableStatementInit('let');
+    }
+    return this.Expression();
+  }
 
   IfStatement() {
     this.getToken('if');
@@ -117,14 +138,19 @@ export class Parser {
 
   }
 
-  VariableStatement(tokenType: string) {
+  VariableStatementInit(tokenType: string) {
     this.getToken(tokenType);
     const declarations = this.VariableDeclarationList();
-    this.getToken(';');
     return {
       type: 'VariableStatement',
-      declarations
+      declarations,
     }
+  }
+
+  VariableStatement(tokenType: string) {
+    const variableStatement = this.VariableStatementInit(tokenType);
+    this.getToken(';');
+    return variableStatement;
   }
 
   VariableDeclarationList() {
